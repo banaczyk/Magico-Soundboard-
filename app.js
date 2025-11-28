@@ -117,27 +117,41 @@ dbRequest.onerror = () => {
 // ---------------- ŁADOWANIE Z BAZY ----------------
 
 function loadSavedFiles() {
-  if (!db) return;
-  const tx = db.transaction("audioFiles", "readonly");
-  const store = tx.objectStore("audioFiles");
-  const req = store.getAll();
-  req.onsuccess = () => {
-    const rows = req.result || [];
-    // sort alfabetycznie
-    rows.sort((a, b) =>
-      a.name.localeCompare(b.name, "pl", { sensitivity: "base" })
-    );
-    rows.forEach((row) => {
-      const data = {
-        id: row.id,
-        name: row.name,
-        blob: row.blob,
-        color: row.color || DEFAULT_COLOR,
-      };
-      createTile(data);
-    });
-  };
+    if (!db) return;
+
+    const tx = db.transaction("audioFiles", "readonly");
+    const store = tx.objectStore("audioFiles");
+    const req = store.getAll();
+
+    req.onsuccess = (e) => {
+        const rows = e.target.result || [];
+
+        // jeśli pusty — nic nie robimy i wychodzimy
+        if (rows.length === 0) {
+            return;
+        }
+
+        // sortowanie alfabetyczne PL
+        rows.sort((a, b) =>
+            a.name.localeCompare(b.name, "pl", { sensitivity: "base" })
+        );
+
+        rows.forEach((row) => {
+            createTile({
+                id: row.id,
+                name: row.name,
+                blob: row.blob,
+                color: row.color || DEFAULT_COLOR,
+            });
+        });
+    };
+
+    req.onerror = (e) => {
+        console.error("Błąd podczas odczytu audioFiles:", e.target.error);
+    };
 }
+
+
 
 // ---------------- ZAPIS NOWYCH PLIKÓW ----------------
 
@@ -299,6 +313,7 @@ function createTile(data) {
 
     // DOM
     col.remove();
+    updateEmptyInfo();
   });
 
   // DODAJEMY PRZYCISKI DO CONTROLS
@@ -364,6 +379,9 @@ function createTile(data) {
       crossfadeCurrentId = null;
     }
   });
+
+  updateEmptyInfo();
+
 }
 
 
@@ -640,6 +658,19 @@ function applyImportedSettings(data) {
 tilesState.forEach((st) => {
   console.log("RAW:", st.name, " | NORM:", normalizeName(st.name));
 });
+
+function updateEmptyInfo() {
+    const info = document.getElementById("emptyInfo");
+    if (!info) return;
+
+    // poprawiony selektor
+    const hasTiles = tilesContainer.querySelectorAll(":scope > div").length > 0;
+
+    info.style.display = hasTiles ? "none" : "block";
+}
+
+
+
 
 
 document.getElementById("tileSizeSelector").addEventListener("change", (e) => {
