@@ -11,44 +11,87 @@
     <!-- Nasze style -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-light">
+<body class="bg-light overflow-x-hidden px-3">
 
-<div class="py-2">
-    <h1 class="mb-4 p-3">Jinglownica</h1>
+<div class="py-5">
+    <h1 class="mb-4">Jinglownica</h1>
 
-    <div class="row g-4 p-3">
+    <div class="row g-4">
         <!-- LEWY PANEL -->
         <div class="col-md-3">
+            <div class="mb-3">
+  <label class="form-label">Rozmiar kafelków:</label>
+  <select id="tileSizeSelector" class="form-select">
+    <option value="small">Małe</option>
+    <option value="medium" selected>Średnie</option>
+    <option value="large">Duże</option>
+  </select>
+</div>
+
+
+            <!-- Wczytywanie plików -->
             <div class="card mb-4">
-                <div class="card-header bg-dark text-white">Wybierz pliki audio</div>
+                <div class="card-header bg-primary text-white">
+                    Pliki audio
+                </div>
                 <div class="card-body">
-                    <input type="file" id="fileInput" multiple accept="audio/*" class="form-control mb-3">
-                    <button id="clearBtn" class="btn btn-danger w-100">Wyczyść listę</button>
-                    <p class="text-muted small mt-3 mb-0">
-                        Pliki i ustawienia są zapisywane lokalnie w Twojej przeglądarce.<br>
-                        Nic nie jest wysyłane na serwer.
-                    </p>
+                    <div class="mb-3">
+                        <label for="fileInput" class="form-label">Wybierz pliki z komputera</label>
+                        <input type="file" id="fileInput" class="form-control" multiple accept="audio/*">
+                    </div>
+                    <button id="clearBtn" class="btn btn-outline-danger w-100">
+                        Wyczyść listę
+                    </button>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header bg-dark text-white">Funkcje</div>
+            <!-- Funkcje odtwarzania -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    Funkcje
+                </div>
                 <div class="card-body">
-                    <div class="form-check mb-3">
+                    <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="crossfadeToggle">
                         <label class="form-check-label" for="crossfadeToggle">
                             Płynne przejścia (crossfade)
                         </label>
                     </div>
 
-                    <label class="form-label">
-                        Czas przejścia: <span id="fadeTimeLabel">5</span>s
-                    </label>
-                    <input type="range" id="fadeSlider" min="1" max="10" value="5" class="form-range">
+                    <div class="mb-2">
+                        <label for="fadeSlider" class="form-label">
+                            Czas przejścia: <span id="fadeTimeLabel">5</span> s
+                        </label>
+                        <input type="range" class="form-range" id="fadeSlider" min="1" max="15" value="5">
+                    </div>
+                    <p class="small text-muted mb-0">
+                        Gdy crossfade jest włączony, kliknięcie drugiego kafelka płynnie wycisza pierwszy utwór
+                        i podgłasza drugi.
+                    </p>
+                </div>
+            </div>
 
-                    <p class="text-muted small mb-0">
-                        Gdy crossfade jest włączony, uruchomienie nowego pliku<br>
-                        powoduje płynne przejście z poprzedniego na nowy.
+            <!-- Export / import ustawień -->
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    Eksport / import ustawień
+                </div>
+                <div class="card-body">
+                    <button id="exportSettingsBtn" class="btn btn-outline-secondary w-100 mb-3">
+                        Eksportuj ustawienia
+                    </button>
+
+                    <label for="importSettingsInput" class="form-label small">
+                        Import z pliku (.json)
+                    </label>
+                    <input type="file"
+                           id="importSettingsInput"
+                           class="form-control mb-2"
+                           accept=".json,.txt">
+
+                    <p class="small text-muted mb-0">
+                        Eksport zapisuje nazwy plików, kolory kafelków oraz ustawienia crossfade.
+                        Import dopasowuje ustawienia do plików o tych samych nazwach.
                     </p>
                 </div>
             </div>
